@@ -1,0 +1,42 @@
+name: Deploy_ARM
+
+on:
+  workflow_dispatch:
+    inputs:
+      resourceGroupName:
+        description: 'Name of the Azure Resource Group to deploy'
+        required: true
+        type: string
+      location:
+        description: 'Azure region to deploy resources in'
+        required: true
+        type: string
+    secrets:
+      AZURE_CREDS:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Authenticate to Azure
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDS }}
+
+      - name: Deploy Resource Group
+        uses: Azure/CLI@v1
+        with:
+          inlinescript: |
+            #!/bin/bash
+            az group create --resource-group ${{ inputs.resourceGroupName }} --location ${{ inputs.location }}
+
+      - name: Deploy ARM Template
+        uses: Azure/arm-deploy@v1
+        with:
+          resourceGroupName: ${{ inputs.ResourceGroupName }}
+          template: arm/vm-ubuntu-2004.json
+          parameters: arm/vm-ubuntu-2004.parameters.json location=${{ inputs.location }}
