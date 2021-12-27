@@ -11,9 +11,6 @@ on:
         description: 'Azure region to deploy resources in'
         required: true
         type: string
-    secrets:
-      AZURE_CREDS:
-        required: true
 
 jobs:
   deploy:
@@ -27,6 +24,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDS }}
 
+      # Ensure resource group exists
       - name: Deploy Resource Group
         uses: Azure/CLI@v1
         with:
@@ -34,9 +32,10 @@ jobs:
             #!/bin/bash
             az group create --resource-group ${{ inputs.resourceGroupName }} --location ${{ inputs.location }}
 
+      # Deploy template
       - name: Deploy ARM Template
         uses: Azure/arm-deploy@v1
         with:
           resourceGroupName: ${{ inputs.ResourceGroupName }}
-          template: arm/vm-ubuntu-2004.json
-          parameters: arm/vm-ubuntu-2004.parameters.json location=${{ inputs.location }}
+          template: azuredeploy.json
+          parameters: azuredeploy.parameters.json location=${{ inputs.location }} adminPublicKey=${{ secrets.RJMLAB_SSH_PUB_KEY }}
