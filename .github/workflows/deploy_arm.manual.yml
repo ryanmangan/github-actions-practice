@@ -36,7 +36,7 @@ jobs:
       - name: Deploy ARM Template
         uses: azure/powershell@v1
         env:
-          SSH_KEY: ${{ secrets.RJMLAB_SSH_PUB_KEY }}
+          #SSH_KEY: ${{ secrets.RJMLAB_SSH_PUB_KEY }}
           SSH_IP: ${{ secrets.SOURCE_IP_ADDRESS }}
         with:
           inlineScript: |
@@ -46,7 +46,7 @@ jobs:
             -TemplateFile ${{ github.workspace }}\azuredeploy.json `
             -TemplateParameterFile ${{ github.workspace }}\azuredeploy.parameters.json `
             -location ${{ github.event.inputs.location }} `
-            -adminPublicKey $adminPw `
+            -adminPublicKey ${{ secrets.RJMLAB_SSH_PUB_KEY }} `
             #-networkSecurityGroupSshSourceIP "$env:SSH_IP"
           azPSVersion: "latest"
 
