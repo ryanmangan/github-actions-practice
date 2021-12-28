@@ -38,4 +38,4 @@ jobs:
         with:
           resourceGroupName: ${{ github.event.inputs.ResourceGroupName }}
           template: azuredeploy.json
-          parameters: azuredeploy.parameters.json location=${{ github.event.inputs.location }} adminPublicKey="${{ secrets.RJMLAB_SSH_PUB_KEY }}"
+          parameters: azuredeploy.parameters.json location=${{ github.event.inputs.location }} adminPublicKey="${{ secrets.RJMLAB_SSH_PUB_KEY }}" networkSecurityGroupSshSourceIP="${{ secrets.SOURCE_IP_ADDRESS }}"
