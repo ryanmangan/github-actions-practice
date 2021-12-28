@@ -55,7 +55,8 @@ jobs:
         uses: Azure/arm-deploy@v1
         env:
           SSH_KEY: ${{ secrets.RJMLAB_SSH_PUB_KEY }}
+          SSH_IP: ${{ secrets.SOURCE_IP_ADDRESS }}
         with:
           resourceGroupName: ${{ github.event.inputs.ResourceGroupName }}
           template: azuredeploy.json
-          parameters: azuredeploy.parameters.json location=${{ github.event.inputs.location }} adminPublicKey="${SSH_KEY}" #networkSecurityGroupSshSourceIP="${{ secrets.SOURCE_IP_ADDRESS }}"
+          parameters: azuredeploy.parameters.json location=${{ github.event.inputs.location }} adminPublicKey="${SSH_KEY}" networkSecurityGroupSshSourceIP="${SSH_IP}"
