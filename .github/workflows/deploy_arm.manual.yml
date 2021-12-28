@@ -42,8 +42,8 @@ jobs:
           inlineScript: |
             New-AzResourceGroupDeployment `
             -ResourceGroupName ${{ github.event.inputs.resourceGroupName }} `
-            -TemplateFile $GITHUB_WORKSPACE\azuredeploy.json `
-            -TemplateParameterFile $GITHUB_WORKSPACE\azuredeploy.parameters.json `
+            -TemplateFile ${{ github.workspace }}\azuredeploy.json `
+            -TemplateParameterFile ${{ github.workspace }}\azuredeploy.parameters.json `
             -location ${{ github.event.inputs.location }} `
             -adminPublicKey "$env:SSH_KEY" `
             #-networkSecurityGroupSshSourceIP "$env:SSH_IP"
