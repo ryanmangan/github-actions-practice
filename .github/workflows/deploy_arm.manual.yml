@@ -40,7 +40,7 @@ jobs:
           SSH_IP: ${{ secrets.SOURCE_IP_ADDRESS }}
         with:
           inlineScript: |
-            $adminPw = ConvertTo-SecureString -String "$env:SSH_KEY" -AsPlainText -Force
+            #$adminPw = ConvertTo-SecureString -String "$env:SSH_KEY" -AsPlainText -Force
             New-AzResourceGroupDeployment `
             -ResourceGroupName ${{ github.event.inputs.resourceGroupName }} `
             -TemplateFile ${{ github.workspace }}\azuredeploy.json `
