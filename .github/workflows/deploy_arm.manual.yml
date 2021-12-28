@@ -59,4 +59,4 @@ jobs:
         with:
           resourceGroupName: ${{ github.event.inputs.ResourceGroupName }}
           template: azuredeploy.json
-          parameters: azuredeploy.parameters.json location=${{ github.event.inputs.location }} adminPublicKey="${SSH_KEY}" #networkSecurityGroupSshSourceIP="${SSH_IP}"
+          parameters: azuredeploy.parameters.json location=${{ github.event.inputs.location }} adminPublicKey="${SSH_KEY}" networkSecurityGroupSshSourceIP="${SSH_IP}"
