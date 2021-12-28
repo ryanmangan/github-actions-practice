@@ -47,6 +47,7 @@ jobs:
             -location ${{ github.event.inputs.location }} `
             -adminPublicKey "$env:SSH_KEY" `
             #-networkSecurityGroupSshSourceIP "$env:SSH_IP"
+          azPSVersion: "latest"
 
       # Deploy template
       #- name: Deploy ARM Template
