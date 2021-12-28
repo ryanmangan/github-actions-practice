@@ -382,15 +382,10 @@
                                 "osProfile": {
                                     "computerName": "[concat(parameters('vmComputerName'), copyIndex(101))]",
                                     "adminUsername": "[parameters('adminUsername')]",
+                                    "adminPassword": "[parameters('adminPublicKey')]",
                                     "linuxConfiguration": {
-                                        "disablePasswordAuthentication": true,
-                                        "ssh": {
-                                            "publicKeys": [
-                                                {
-                                                    "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-                                                    "keyData": "[parameters('adminPublicKey')]"
-                                                }
-                                            ]
+                                        "patchSettings": {
+                                            "patchMode": "ImageDefault"
                                         }
                                     }
                                 },
