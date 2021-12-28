@@ -55,7 +55,7 @@
                         "access": "Allow",
                         "direction": "Inbound",
                         "sourceAddressPrefix": "[if(empty(parameters('networkSecurityGroupSshSourceIP')), '*', '')]",
-                        "sourceAddressPrefixes": "[parameters('networkSecurityGroupSshSourceIP')]" ,
+                        "sourceAddressPrefixes": "[if(empty(parameters('networkSecurityGroupSshSourceIP')), parameters('networkSecurityGroupSshSourceIP'), split(parameters('networkSecurityGroupSshSourceIP'), ','))]",
                         "sourcePortRange": "*",
                         "destinationAddressPrefix": "*",
                         "destinationPortRange": "22"
