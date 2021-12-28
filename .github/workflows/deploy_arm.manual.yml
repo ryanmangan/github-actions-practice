@@ -40,12 +40,13 @@ jobs:
           SSH_IP: ${{ secrets.SOURCE_IP_ADDRESS }}
         with:
           inlineScript: |
+            $adminPw = ConvertTo-SecureString -String "$env:SSH_KEY" -AsPlainText -Force
             New-AzResourceGroupDeployment `
             -ResourceGroupName ${{ github.event.inputs.resourceGroupName }} `
             -TemplateFile ${{ github.workspace }}\azuredeploy.json `
             -TemplateParameterFile ${{ github.workspace }}\azuredeploy.parameters.json `
             -location ${{ github.event.inputs.location }} `
-            -adminPublicKey "$env:SSH_KEY" `
+            -adminPublicKey $adminPw `
             #-networkSecurityGroupSshSourceIP "$env:SSH_IP"
           azPSVersion: "latest"
 
