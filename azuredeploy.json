@@ -34,11 +34,11 @@
             "defaultValue": []
         },
         "networkSecurityGroupSshSourceIP": {
-            "type": "array",
+            "type": "string",
             "metadata": {
                 "description": "Source IP address(es) for accessing the VMs"
             },
-            "defaultValue": []
+            "defaultValue": ""
         },
         "networkSecurityGroupSshRule": {
             "type": "array",
