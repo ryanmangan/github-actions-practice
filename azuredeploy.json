@@ -254,11 +254,20 @@
                         "vnetId": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
                         "subnetName": "[concat('snet-', parameters('environment'), '-001')]",
                         "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
+                        "bastionHostName": "[concat(variables('virtualNetworkName'), '-bastion')]",
+                        "bastionPublicIpAddressName": "[concat('pip-01-', parameters('environment'), '-bastion')]",
+                        "bastionSubnetName": "AzureBastionSubnet",
                         "subnets": [
                             {
-                                "name":"[variables('subnetName')]",
+                                "name": "[variables('subnetName')]",
                                 "properties": {
-                                    "addressPrefix":"10.0.0.0/24"
+                                    "addressPrefix": "10.0.0.0/24"
+                                }
+                            },
+                            {
+                                "name": "[variables('bastionSubnetName')]",
+                                "properties": {
+                                    "addressPrefix": "10.0.1.0/26"
                                 }
                             }
                         ],
@@ -342,6 +351,19 @@
                             }
                         },
                         {
+                            "type": "Microsoft.Network/publicIpAddresses",
+                            "apiVersion": "2019-02-01",
+                            "name": "[variables('bastionPublicIpAddressName')]",
+                            "location": "[parameters('location')]",
+                            "tags": "[parameters('tags')]",
+                            "sku": {
+                                "name": "Standard"
+                            },
+                            "properties": {
+                                "publicIpAllocationMethod": "Static"
+                            }
+                        },
+                        {
                             "type": "Microsoft.Compute/virtualMachines",
                             "apiVersion": "2021-07-01",
                             "name": "[concat(parameters('vmName'), copyIndex(101))]",
@@ -421,6 +443,35 @@
                                 "notificationSettings": {
                                     "status": "Disabled"
                                 }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/bastionHosts",
+                            "apiVersion": "2020-11-01",
+                            "name": "[variables('bastionHostName')]",
+                            "location": "[parameters('location')]",
+                            "dependsOn": [
+                                //"[concat('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+                                "[concat('Microsoft.Network/publicIpAddresses', variables('bastionPublicIpAddressName'))]",
+                                "[concat('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('bastionSubnetName'))]"
+                            ],
+                            "sku": {
+                                "name": "Basic"
+                            },
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "name": "IpConf",
+                                        "properties": {
+                                            "subnet": {
+                                                "id": "[concat(variables('vnetId'), '/subnets/', variables('bastionSubnetName'))]"
+                                            },
+                                            "publicIPAddress": {
+                                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('bastionPublicIpAddressName'))]"
+                                            }
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ],
