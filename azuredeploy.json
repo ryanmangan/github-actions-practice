@@ -451,9 +451,9 @@
                             "name": "[variables('bastionHostName')]",
                             "location": "[parameters('location')]",
                             "dependsOn": [
-                                //"[concat('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+                                "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
                                 "[concat('Microsoft.Network/publicIpAddresses/', variables('bastionPublicIpAddressName'))]",
-                                "[concat('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkName'), '/', variables('bastionSubnetName'))]"
+                                //"[concat('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkName'), '/', variables('bastionSubnetName'))]"
                             ],
                             "sku": {
                                 "name": "Basic"
