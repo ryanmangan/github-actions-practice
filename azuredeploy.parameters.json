@@ -5,9 +5,9 @@
         "environment": {
             "value": "dev"
         },
-        "adminPublicKey": {
-            "value": ""
-        },
+        //"adminPublicKey": {
+        //    "value": ""
+        //},
         "networkSecurityGroupRules": {
             "value": [
                 {
