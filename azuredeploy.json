@@ -33,36 +33,36 @@
             },
             "defaultValue": []
         },
-        //"networkSecurityGroupSshSourceIP": {
-        //    "type": "string",
-        //    "metadata": {
-        //        "description": "Source IP address(es) for accessing the VMs"
-        //    },
-        //    "defaultValue": ""
-        //},
-        //"networkSecurityGroupSshRule": {
-        //    "type": "array",
-        //    "metadata": {
-        //        "description": "NSG rule to allow SSH to the VMs from IP addresses specified in parameter networkSecurityGroupSshSourceIP (allows any IP if none are specified)"
-        //    },
-        //    "defaultValue": [
-        //        {
-        //            "name": "Allow-SSH",
-        //            "properties": {
-        //                "description": "Allow SSH to the Host",
-        //                "priority": 100,
-        //                "protocol": "TCP",
-        //                "access": "Allow",
-        //                "direction": "Inbound",
-        //                "sourceAddressPrefix": "[if(empty(parameters('networkSecurityGroupSshSourceIP')), '*', '')]",
-        //                "sourceAddressPrefixes": "[if(empty(parameters('networkSecurityGroupSshSourceIP')), parameters('networkSecurityGroupSshSourceIP'), split(parameters('networkSecurityGroupSshSourceIP'), ','))]",
-        //                "sourcePortRange": "*",
-        //                "destinationAddressPrefix": "*",
-        //                "destinationPortRange": "22"
-        //            }
-        //        }
-        //    ]
-        //},
+        "networkSecurityGroupSshSourceIP": {
+            "type": "string",
+            "metadata": {
+                "description": "Source IP address(es) for accessing the VMs"
+            },
+            "defaultValue": ""
+        },
+        "networkSecurityGroupSshRule": {
+            "type": "array",
+            "metadata": {
+                "description": "NSG rule to allow SSH to the VMs from IP addresses specified in parameter networkSecurityGroupSshSourceIP (allows any IP if none are specified)"
+            },
+            "defaultValue": [
+                {
+                    "name": "Allow-SSH",
+                    "properties": {
+                        "description": "Allow SSH to the Host",
+                        "priority": 100,
+                        "protocol": "TCP",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourceAddressPrefix": "[if(empty(parameters('networkSecurityGroupSshSourceIP')), '*', '')]",
+                        "sourceAddressPrefixes": "[if(empty(parameters('networkSecurityGroupSshSourceIP')), parameters('networkSecurityGroupSshSourceIP'), split(parameters('networkSecurityGroupSshSourceIP'), ','))]",
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRange": "22"
+                    }
+                }
+            ]
+        },
         "enableAcceleratedNetworking": {
             "type": "bool",
             "defaultValue": false
@@ -155,9 +155,9 @@
                     "networkSecurityGroupRules": {
                         "value": "[parameters('networkSecurityGroupRules')]"
                     },
-                    //"networkSecurityGroupSshRule": {
-                    //    "value": "[parameters('networkSecurityGroupSshRule')]"
-                    //},
+                    "networkSecurityGroupSshRule": {
+                        "value": "[parameters('networkSecurityGroupSshRule')]"
+                    },
                     "addressPrefixes": {
                         "value": "[parameters('addressPrefixes')]"
                     },
@@ -208,9 +208,9 @@
                         "networkSecurityGroupRules": {
                             "type": "array"
                         },
-                        //"networkSecurityGroupSshRule": {
-                        //    "type": "array"
-                        //},
+                        "networkSecurityGroupSshRule": {
+                            "type": "array"
+                        },
                         "addressPrefixes": {
                             "type": "array"
                         },
@@ -271,8 +271,8 @@
                                 }
                             }
                         ],
-                        //"networkSecurityGroupRules": "[union(parameters('networkSecurityGroupRules'), parameters('networkSecurityGroupSshRule'))]"
-                        "networkSecurityGroupRules": "[parameters('networkSecurityGroupRules')]"
+                        "networkSecurityGroupRules": "[union(parameters('networkSecurityGroupRules'), parameters('networkSecurityGroupSshRule'))]"
+                        //"networkSecurityGroupRules": "[parameters('networkSecurityGroupRules')]"
                     },
                     "resources": [
                         {
