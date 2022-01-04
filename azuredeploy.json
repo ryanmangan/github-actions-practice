@@ -126,11 +126,23 @@
             "metadata": {
                 "description": "The command to execute the custom script"
             }
+        },
+        "deployBastion": {
+            "type": "bool",
+            "metadata": {
+                "description": "Determines whether a bastion host will be deployed for accessing the VM(s)"
+            },
+            "defaultValue": false
         }
     },
     "variables": {
         "vmComputerName": "rjmlab",
-        "vmName": "[concat('vm', variables('vmComputerName'))]"
+        "vmName": "[concat('vm', variables('vmComputerName'))]"//,
+        //"sshSourceIpStringRemoveWhitespace": "[if(empty(parameters('networkSecurityGroupSshSourceIP')), '', replace(parameters('networkSecurityGroupSshSourceIP'), ' ', ''))]",
+        //"sshSourceIpList": "[if(empty(variables('sshSourceIpStringRemoveWhitespace')), '', split(variables('sshSourceIpStringRemoveWhitespace'), ','))]",
+        //"nsgAllowSSHRule": "[if(empty(variables('sshSourceIpList')), json('null'), json(concat('[{\"name\": \"Allow-SSH\", \"properties\": {\"description\": \"Allow SSH to the Host\", \"priority\": 100, \"protocol\": \"TCP\", \"access\": \"Allow\", \"direction\": \"Inbound\", \"sourceAddressPrefix\": \"\", \"sourceAddressPrefixes\": \"', json(variables('sshSourceIpStringRemoveWhitespace')), '\", \"sourcePortRange\": \"*\", \"destinationAddressPrefix\": \"*\", \"destinationPortRange\": \"22\"}}]')))]"
+
+        //"sshJson": "[json(concat('[{\"name\": \"Allow-SSH\", \"properties\": {\"description\": \"Allow SSH to the Host\", \"priority\": 100, \"protocol\": \"TCP\", \"access\": \"Allow\", \"direction\": \"Inbound\", \"sourceAddressPrefix\": \"\", \"sourceAddressPrefixes\": \"', variables('sshSourceIpList'), '\", \"sourcePortRange\": \"*\", \"destinationAddressPrefix\": \"*\", \"destinationPortRange\": \"22\"}}]'))]"
     },
     "resources": [
         {
@@ -158,6 +170,9 @@
                     "networkSecurityGroupSshRule": {
                         "value": "[parameters('networkSecurityGroupSshRule')]"
                     },
+                    //"nsgAllowSSHRule": {
+                    //    "value": "[variables('nsgAllowSSHRule')]"
+                    //},
                     "addressPrefixes": {
                         "value": "[parameters('addressPrefixes')]"
                     },
@@ -190,6 +205,9 @@
                     },
                     "adminPublicKey": {
                         "value": "[parameters('adminPublicKey')]"
+                    },
+                    "deployBastion": {
+                        "value": "[parameters('deployBastion')]"
                     }
                 },
                 "template": {
@@ -211,6 +229,9 @@
                         "networkSecurityGroupSshRule": {
                             "type": "array"
                         },
+                        //"nsgAllowSSHRule": {
+                        //    "type": "array"
+                        //},
                         "addressPrefixes": {
                             "type": "array"
                         },
@@ -243,6 +264,9 @@
                         },
                         "adminPublicKey": {
                             "type": "securestring"
+                        },
+                        "deployBastion": {
+                            "type": "bool"
                         }
                     },
                     "variables": {
@@ -257,13 +281,15 @@
                         "bastionHostName": "[concat(variables('virtualNetworkName'), '-bastion')]",
                         "bastionPublicIpAddressName": "[concat('pip-01-', parameters('environment'), '-bastion')]",
                         "bastionSubnetName": "AzureBastionSubnet",
-                        "subnets": [
+                        "defaultSubnet": [
                             {
                                 "name": "[variables('subnetName')]",
                                 "properties": {
                                     "addressPrefix": "10.0.0.0/24"
                                 }
-                            },
+                            }
+                        ],
+                        "bastionSubnet": [
                             {
                                 "name": "[variables('bastionSubnetName')]",
                                 "properties": {
@@ -271,6 +297,8 @@
                                 }
                             }
                         ],
+                        "subnets": "[if(parameters('deployBastion'), union(variables('defaultSubnet'), variables('bastionSubnet')), variables('defaultSubnet'))]",
+                        //"networkSecurityGroupRules": "[if(empty(parameters('nsgAllowSSHRule')), union(parameters('networkSecurityGroupRules'), parameters('networkSecurityGroupSshRule')), union(parameters('networkSecurityGroupRules'), parameters('nsgAllowSSHRule')))]"
                         "networkSecurityGroupRules": "[union(parameters('networkSecurityGroupRules'), parameters('networkSecurityGroupSshRule'))]"
                         //"networkSecurityGroupRules": "[parameters('networkSecurityGroupRules')]"
                     },
@@ -352,6 +380,7 @@
                             }
                         },
                         {
+                            "condition": "[parameters('deployBastion')]",
                             "type": "Microsoft.Network/publicIpAddresses",
                             "apiVersion": "2019-02-01",
                             "name": "[variables('bastionPublicIpAddressName')]",
@@ -447,6 +476,7 @@
                             }
                         },
                         {
+                            "condition": "[parameters('deployBastion')]",
                             "type": "Microsoft.Network/bastionHosts",
                             "apiVersion": "2020-11-01",
                             "name": "[variables('bastionHostName')]",
