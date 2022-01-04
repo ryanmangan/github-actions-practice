@@ -17,7 +17,7 @@ on:
         type: string
       deployBastion:
         description: 'Deploy bastion host?'
-        required: true
+        required: false
         type: boolean
 
 jobs:
