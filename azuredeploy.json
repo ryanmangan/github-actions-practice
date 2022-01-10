@@ -128,21 +128,44 @@
             }
         },
         "deployBastion": {
-            "type": "bool",
+            "type": "string",
             "metadata": {
                 "description": "Determines whether a bastion host will be deployed for accessing the VM(s)"
             },
-            "defaultValue": false
+            "defaultValue": "false",
+            "allowedValues": [
+                "true",
+                "false",
+                "True",
+                "False"
+            ]
         }
     },
     "variables": {
         "vmComputerName": "rjmlab",
-        "vmName": "[concat('vm', variables('vmComputerName'))]"//,
+        "vmName": "[concat('vm', variables('vmComputerName'))]",
+        "deployBastionBoolean": "[bool(parameters('deployBastion'))]"
         //"sshSourceIpStringRemoveWhitespace": "[if(empty(parameters('networkSecurityGroupSshSourceIP')), '', replace(parameters('networkSecurityGroupSshSourceIP'), ' ', ''))]",
         //"sshSourceIpList": "[if(empty(variables('sshSourceIpStringRemoveWhitespace')), '', split(variables('sshSourceIpStringRemoveWhitespace'), ','))]",
-        //"nsgAllowSSHRule": "[if(empty(variables('sshSourceIpList')), json('null'), json(concat('[{\"name\": \"Allow-SSH\", \"properties\": {\"description\": \"Allow SSH to the Host\", \"priority\": 100, \"protocol\": \"TCP\", \"access\": \"Allow\", \"direction\": \"Inbound\", \"sourceAddressPrefix\": \"\", \"sourceAddressPrefixes\": \"', json(variables('sshSourceIpStringRemoveWhitespace')), '\", \"sourcePortRange\": \"*\", \"destinationAddressPrefix\": \"*\", \"destinationPortRange\": \"22\"}}]')))]"
+        //"nsgAllowSshRule": [
+        //    {
+        //        "name": "Allow-SSH",
+        //        "properties": {
+        //            "description": "Allow SSH to the Host",
+        //            "priority": 100,
+        //            "protocol": "TCP",
+        //            "access": "Allow",
+        //            "direction": "Inbound",
+        //            "sourceAddressPrefix": "",
+        //            "sourceAddressPrefixes": "[if(empty(parameters('networkSecurityGroupSshSourceIP')), parameters('networkSecurityGroupSshSourceIP'), split(parameters('networkSecurityGroupSshSourceIP'), ','))]",
+        //            "sourcePortRange": "*",
+        //            "destinationAddressPrefix": "*",
+        //            "destinationPortRange": "22"
+        //        }
+        //    }
+        //]
 
-        //"sshJson": "[json(concat('[{\"name\": \"Allow-SSH\", \"properties\": {\"description\": \"Allow SSH to the Host\", \"priority\": 100, \"protocol\": \"TCP\", \"access\": \"Allow\", \"direction\": \"Inbound\", \"sourceAddressPrefix\": \"\", \"sourceAddressPrefixes\": \"', variables('sshSourceIpList'), '\", \"sourcePortRange\": \"*\", \"destinationAddressPrefix\": \"*\", \"destinationPortRange\": \"22\"}}]'))]"
+        //"sshJson": "[json(concat('[{\"name\": \"Allow-SSH\", \"properties\": {\"description\": \"Allow SSH to the Host\", \"priority\": 100, \"protocol\": \"TCP\", \"access\": \"Allow\", \"direction\": \"Inbound\", \"sourceAddressPrefix\": \"\", \"sourceAddressPrefixes\": \"', string(variables('sshSourceIpList')), '\", \"sourcePortRange\": \"*\", \"destinationAddressPrefix\": \"*\", \"destinationPortRange\": \"22\"}}]'))]"
     },
     "resources": [
         {
@@ -207,7 +230,7 @@
                         "value": "[parameters('adminPublicKey')]"
                     },
                     "deployBastion": {
-                        "value": "[parameters('deployBastion')]"
+                        "value": "[variables('deployBastionBoolean')]"
                     }
                 },
                 "template": {
